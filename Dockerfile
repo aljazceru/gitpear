@@ -24,10 +24,10 @@ RUN npm link
 RUN mkdir -p /srv/repos/pear
 
 
-COPY default /etc/nginx/sites-enabled/default
+COPY docker/nginx-default-config /etc/nginx/sites-enabled/default
 
 WORKDIR /app
-COPY entrypoint.sh .
+COPY docker/entrypoint.sh .
 RUN chmod +x entrypoint.sh
 
 ENTRYPOINT ["/bin/bash", "-c", "/app/entrypoint.sh"]
