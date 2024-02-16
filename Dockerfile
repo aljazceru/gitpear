@@ -2,7 +2,7 @@
 FROM node:latest
 
 # install nginx
-RUN apt-get update && apt-get install -y nginx git fcgiwrap spawn-fcgi
+RUN apt-get update && apt-get install -y nginx git fcgiwrap spawn-fcgi pass
 ENV GIT_PEAR=/srv/repos/pear
 EXPOSE 80
 STOPSIGNAL SIGTERM
@@ -23,7 +23,7 @@ RUN npm link
 
 RUN mkdir -p /srv/repos/pear
 
-
+COPY docker/gna.sh /app/
 COPY docker/nginx-default-config /etc/nginx/sites-enabled/default
 
 WORKDIR /app
