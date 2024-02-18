@@ -2,18 +2,21 @@ const home = require('./home')
 const fs = require('fs')
 
 const ROLES = {
+  owner: {
+    description: 'Read and write to all branches, and ACL management'
+  },
   admin: {
-    description: 'Read and write to all branches',
+    description: 'Read and write to all branches'
   },
   contributor: {
-    description: 'Read and write to all branches except protected ones',
+    description: 'Read and write to all branches except protected ones'
   },
   viewer: {
-    description: 'Read all branches',
-  },
+    description: 'Read all branches'
+  }
 }
 const DEFAULT_ACL = {
-  visibility: 'public', // public|private 
+  visibility: 'public', // public|private
   protectedBranches: ['master', 'main'],
   ACL: {}
 }
@@ -23,9 +26,16 @@ function getUserRole (repoName, user) {
   return acl.ACL[user]
 }
 
+function getOwners (repoName) {
+  const acl = getACL(repoName)
+  return Object.keys(acl.ACL).filter(user => acl.ACL[user] === 'owner')
+}
+
 function getAdmins (repoName) {
   const acl = getACL(repoName)
-  return Object.keys(acl.ACL).filter(user => acl.ACL[user] === 'admin')
+  const admins = Object.keys(acl.ACL).filter(user => acl.ACL[user] === 'admin')
+  const owners = getOwners(repoName)
+  return [...admins, ...owners].filter((user, i, arr) => arr.indexOf(user) === i)
 }
 
 function getContributors (repoName) {
@@ -113,8 +123,9 @@ module.exports = {
   getACL,
   addProtectedBranch,
   removeProtectedBranch,
+  getOwners,
   getAdmins,
   getContributors,
   getViewers,
-  revokeAccessFromUser,
+  revokeAccessFromUser
 }
